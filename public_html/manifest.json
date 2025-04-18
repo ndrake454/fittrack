@@ -1,0 +1,85 @@
+{
+    "name": "FitTrack",
+    "short_name": "FitTrack",
+    "description": "Personal workout tracking application",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#007bff",
+    "icons": [
+        {
+            "src": "assets/images/android/android-launchericon-48-48.png",
+            "sizes": "48x48",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/android/android-launchericon-72-72.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/android/android-launchericon-96-96.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/android/android-launchericon-144-144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/android/android-launchericon-192-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/android/android-launchericon-512-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/ios/192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "assets/images/ios/512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "assets/images/screenshots/dashboard.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "assets/images/screenshots/mobile.png",
+            "sizes": "750x1334",
+            "type": "image/png",
+            "form_factor": "narrow"
+        }
+    ],
+    "orientation": "portrait-primary",
+    "categories": ["fitness", "health", "lifestyle"],
+    "shortcuts": [
+        {
+            "name": "Start Workout",
+            "short_name": "Workout",
+            "description": "Start a new workout session",
+            "url": "/index.html?page=workout&action=start",
+            "icons": [{ "src": "assets/images/ios/192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Log Weight",
+            "short_name": "Weight",
+            "description": "Log your current weight",
+            "url": "/index.html?page=dashboard&action=weight",
+            "icons": [{ "src": "assets/images/ios/192.png", "sizes": "192x192" }]
+        }
+    ]
+}
