@@ -1,0 +1,215 @@
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Today's Workout</h5>
+                <button class="btn btn-sm btn-primary" id="start-workout-btn">Start Workout</button>
+            </div>
+            <div class="card-body" id="todays-workout-container">
+                <div class="text-center py-5" id="no-workout-container">
+                    <h6 class="text-muted">No workout scheduled for today</h6>
+                    <button class="btn btn-outline-primary mt-3" id="select-workout-btn">Select a Workout</button>
+                </div>
+                <div id="workout-preview" style="display: none;">
+                    <h5 id="workout-name" class="mb-3"></h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Exercise</th>
+                                    <th>Sets</th>
+                                    <th>Reps</th>
+                                    <th>Previous</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workout-exercises">
+                                <!-- Exercises will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Workouts</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush" id="recent-workouts">
+                            <!-- Recent workouts will be loaded here -->
+                            <li class="list-group-item text-center py-4 text-muted">No recent workouts</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="#" data-page="progress" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">BJJ Sessions</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush" id="recent-bjj">
+                            <!-- Recent BJJ sessions will be loaded here -->
+                            <li class="list-group-item text-center py-4 text-muted">No recent BJJ sessions</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-sm btn-success" id="log-bjj-btn">Log Session</button>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Weight Tracker</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0" id="current-weight">202 lbs</h2>
+                    <button class="btn btn-sm btn-outline-primary" id="update-weight-btn">Update</button>
+                </div>
+                <div class="mb-3" style="height: 150px;">
+                    <canvas id="weight-chart"></canvas>
+                </div>
+                <div class="text-center">
+                    <small class="text-muted">Last updated: <span id="weight-last-updated">Never</span></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Personal Records</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <tbody id="pr-table">
+                        <tr>
+                            <td><strong>Bench Press</strong></td>
+                            <td class="text-end">225 lbs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deadlift</strong></td>
+                            <td class="text-end">260 lbs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pull-ups</strong></td>
+                            <td class="text-end">16 reps</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" id="view-all-prs" class="btn btn-sm btn-outline-primary">View All PRs</a>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Weekly Progress</h5>
+            </div>
+            <div class="card-body">
+                <div style="height: 180px;">
+                    <canvas id="weekly-progress-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="select-workout-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Workout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group" id="workout-list">
+                    <!-- Workouts will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="update-weight-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Weight</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="update-weight-form">
+                    <div class="mb-3">
+                        <label for="new-weight" class="form-label">Current Weight (lbs)</label>
+                        <input type="number" step="0.1" class="form-control" id="new-weight" value="202" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="weight-notes" class="form-label">Notes (optional)</label>
+                        <textarea class="form-control" id="weight-notes" rows="3"></textarea>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Save Weight</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="log-bjj-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Log BJJ Session</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="log-bjj-form">
+                    <div class="mb-3">
+                        <label for="bjj-date" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="bjj-date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bjj-duration" class="form-label">Duration (minutes)</label>
+                        <input type="number" class="form-control" id="bjj-duration" value="60" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bjj-techniques" class="form-label">Techniques Practiced</label>
+                        <textarea class="form-control" id="bjj-techniques" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bjj-notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="bjj-notes" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bjj-rating" class="form-label">How was the session? (1-5)</label>
+                        <select class="form-select" id="bjj-rating" required>
+                            <option value="5">5 - Great</option>
+                            <option value="4">4 - Good</option>
+                            <option value="3" selected>3 - Average</option>
+                            <option value="2">2 - Poor</option>
+                            <option value="1">1 - Very Poor</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Save Session</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
