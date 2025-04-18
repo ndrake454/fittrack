@@ -1,289 +1,548 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Personal exercise tracking web app">
-    <meta name="theme-color" content="#007bff">
-    <title>FitTrack - Your Personal Exercise Tracker</title>
-        
-    <!-- Bootstrap & jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/data-service.js"></script>
-    <script src="assets/js/charts.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/workout.js"></script>
-    <script src="assets/js/admin.js"></script>
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="assets/images/ios/32.png">
-    
-    <!-- PWA manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- iOS PWA support -->
-    <link rel="apple-touch-icon" href="assets/images/ios/180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="assets/images/ios/152.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="assets/images/ios/167.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/ios/180.png">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="FitTrack">
-    
-    <!-- Splash screens for iOS -->
-    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
-    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
-    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)">
-    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
-    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(min-device-width: 768px) and (max-device-width: 1024px)">
-</head>
-<body>
-    <div id="app" class="d-flex flex-column min-vh-100">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    FitTrack
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#" data-page="dashboard">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-page="workout">Workouts</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-page="progress">Progress</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-page="profile">Profile</a>
-                        </li>
-                        <li class="nav-item admin-only" style="display: none;">
-                            <a class="nav-link" href="#" data-page="admin">Admin</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span id="username">Guest</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#" data-page="profile">Profile</a></li>
-                                <li><a class="dropdown-item" href="#" data-page="settings">Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <main class="flex-grow-1 container py-4" id="content">
-            <!-- Content will be loaded here via JavaScript -->
-            <div id="login-container" class="card mx-auto my-5" style="max-width: 400px;">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Sign In</h4>
-                </div>
-                <div class="card-body">
-                    <form id="login-form">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="login-username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="login-password" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </div>
-                    </form>
-                    <hr>
-                    <p class="text-center mb-0">Don't have an account? <a href="#" id="show-register">Register</a></p>
-                </div>
-            </div>
-
-            <div id="register-container" class="card mx-auto my-5" style="max-width: 400px; display: none;">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Create Account</h4>
-                </div>
-                <div class="card-body">
-                    <form id="register-form">
-                        <div class="mb-3">
-                            <label for="register-username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="register-username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="register-email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="register-password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-weight" class="form-label">Current Weight (lbs)</label>
-                            <input type="number" step="0.1" class="form-control" id="register-weight" value="202">
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-height" class="form-label">Height (inches)</label>
-                            <input type="number" step="0.1" class="form-control" id="register-height">
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-goal" class="form-label">Fitness Goal</label>
-                            <select class="form-select" id="register-goal">
-                                <option value="strength">Build Strength</option>
-                                <option value="muscle">Build Muscle</option>
-                                <option value="endurance">Improve Endurance</option>
-                                <option value="weight-loss">Weight Loss</option>
-                            </select>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Register</button>
-                        </div>
-                    </form>
-                    <hr>
-                    <p class="text-center mb-0">Already have an account? <a href="#" id="show-login">Login</a></p>
-                </div>
-            </div>
-        </main>
-
-        <footer class="bg-light py-3 text-center">
-            <div class="container">
-                <p class="mb-0">FitTrack &copy; 2025 - Your Personal Exercise Tracker</p>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Bootstrap & jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/charts.js"></script>
-    <script src="assets/js/workout.js"></script>
-    <script src="assets/js/admin.js"></script>
-    
-    <!-- PWA Service Worker Registration -->
-<script>
-// Register service worker for PWA functionality
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', async () => {
-        try {
-            const registration = await navigator.serviceWorker.register('/service-worker.js');
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            
-            // Set up background sync if supported
-            if ('sync' in registration) {
-                // Listen for app coming back online
-                window.addEventListener('online', () => {
-                    // Trigger background sync for any offline data
-                    registration.sync.register('sync-workout-data');
-                    registration.sync.register('sync-weight-data');
-                    registration.sync.register('sync-bjj-data');
-                });
-            }
-            
-            // Set up for "Add to Home Screen" prompt
-            let deferredPrompt;
-            const addBtn = document.createElement('button');
-            addBtn.style.display = 'none';
-            addBtn.classList.add('btn', 'btn-primary', 'mt-3');
-            addBtn.textContent = 'Install FitTrack App';
-            
-            // Add button to page (you can position this where appropriate)
-            document.querySelector('.container').appendChild(addBtn);
-            
-            window.addEventListener('beforeinstallprompt', (e) => {
-                // Prevent Chrome 67 and earlier from automatically showing the prompt
-                e.preventDefault();
-                // Stash the event so it can be triggered later
-                deferredPrompt = e;
-                // Update UI to notify the user they can add to home screen
-                addBtn.style.display = 'block';
-                
-                addBtn.addEventListener('click', (e) => {
-                    // Hide our user interface that shows our A2HS button
-                    addBtn.style.display = 'none';
-                    // Show the prompt
-                    deferredPrompt.prompt();
-                    // Wait for the user to respond to the prompt
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            console.log('User accepted the A2HS prompt');
-                            FitTrack.showToast('App installed successfully!', 'success');
-                        } else {
-                            console.log('User dismissed the A2HS prompt');
-                        }
-                        deferredPrompt = null;
-                    });
-                });
-            });
-            
-            // Handle app updates
-            let refreshing = false;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (!refreshing) {
-                    refreshing = true;
-                    window.location.reload();
-                }
-            });
-            
-        } catch (error) {
-            console.error('ServiceWorker registration failed: ', error);
-        }
-    });
-}
-
-// Setup offline detection and notification
-function updateOnlineStatus() {
-    const statusDisplay = document.getElementById('status');
-    if (navigator.onLine) {
-        if (statusDisplay) {
-            statusDisplay.innerHTML = '';
-            statusDisplay.style.display = 'none';
-        } else if (FitTrack && typeof FitTrack.showToast === 'function') {
-            FitTrack.showToast('You are back online!', 'success');
-        }
-    } else {
-        // Create status element if it doesn't exist
-        if (!statusDisplay) {
-            const status = document.createElement('div');
-            status.id = 'status';
-            status.className = 'alert alert-warning fixed-top text-center';
-            status.innerHTML = 'You are currently offline. Some features may be limited.';
-            document.body.prepend(status);
-        } else {
-            statusDisplay.innerHTML = 'You are currently offline. Some features may be limited.';
-            statusDisplay.style.display = 'block';
-        }
-    }
-}
-
-window.addEventListener('online', updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
-updateOnlineStatus(); // Initial check
-</script>
-    
-</body>
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Personal exercise tracking web app">
+
+    <meta name="theme-color" content="#007bff">
+
+    <title>FitTrack - Your Personal Exercise Tracker</title>
+
+        
+
+    <!-- Bootstrap & jQuery -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+
+    <!-- Chart.js -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    
+
+    <!-- Custom JS -->
+
+    <script src="assets/js/auth.js"></script>
+
+    <script src="assets/js/data-service.js"></script>
+
+    <script src="assets/js/charts.js"></script>
+
+    <script src="assets/js/app.js"></script>
+
+    <script src="assets/js/workout.js"></script>
+
+    <script src="assets/js/admin.js"></script>
+
+    
+
+    <!-- Custom CSS -->
+
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    
+
+    <!-- Favicon -->
+
+    <link rel="icon" href="assets/images/ios/32.png">
+
+    
+
+    <!-- PWA manifest -->
+
+    <link rel="manifest" href="manifest.json">
+
+    
+
+    <!-- iOS PWA support -->
+
+    <link rel="apple-touch-icon" href="assets/images/ios/180.png">
+
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/images/ios/152.png">
+
+    <link rel="apple-touch-icon" sizes="167x167" href="assets/images/ios/167.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/ios/180.png">
+
+    
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta name="apple-mobile-web-app-title" content="FitTrack">
+
+    
+
+    <!-- Splash screens for iOS -->
+
+    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+
+    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
+
+    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)">
+
+    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+
+    <link rel="apple-touch-startup-image" href="assets/images/ios/1024.png" media="(min-device-width: 768px) and (max-device-width: 1024px)">
+
+</head>
+
+<body>
+
+    <div id="app" class="d-flex flex-column min-vh-100">
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+            <div class="container-fluid">
+
+                <a class="navbar-brand" href="#">
+
+                    FitTrack
+
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item">
+
+                            <a class="nav-link active" href="#" data-page="dashboard">Dashboard</a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link" href="#" data-page="workout">Workouts</a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link" href="#" data-page="progress">Progress</a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link" href="#" data-page="profile">Profile</a>
+
+                        </li>
+
+                        <li class="nav-item admin-only" style="display: none;">
+
+                            <a class="nav-link" href="#" data-page="admin">Admin</a>
+
+                        </li>
+
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto">
+
+                        <li class="nav-item dropdown">
+
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                <span id="username">Guest</span>
+
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+
+                                <li><a class="dropdown-item" href="#" data-page="profile">Profile</a></li>
+
+                                <li><a class="dropdown-item" href="#" data-page="settings">Settings</a></li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
+
+                            </ul>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+
+        <main class="flex-grow-1 container py-4" id="content">
+
+            <!-- Content will be loaded here via JavaScript -->
+
+            <div id="login-container" class="card mx-auto my-5" style="max-width: 400px;">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h4 class="mb-0">Sign In</h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form id="login-form">
+
+                        <div class="mb-3">
+
+                            <label for="username" class="form-label">Username</label>
+
+                            <input type="text" class="form-control" id="login-username" required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="password" class="form-label">Password</label>
+
+                            <input type="password" class="form-control" id="login-password" required>
+
+                        </div>
+
+                        <div class="d-grid">
+
+                            <button type="submit" class="btn btn-primary">Login</button>
+
+                        </div>
+
+                    </form>
+
+                    <hr>
+
+                    <p class="text-center mb-0">Don't have an account? <a href="#" id="show-register">Register</a></p>
+
+                </div>
+
+            </div>
+
+
+
+            <div id="register-container" class="card mx-auto my-5" style="max-width: 400px; display: none;">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h4 class="mb-0">Create Account</h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form id="register-form">
+
+                        <div class="mb-3">
+
+                            <label for="register-username" class="form-label">Username</label>
+
+                            <input type="text" class="form-control" id="register-username" required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="register-email" class="form-label">Email</label>
+
+                            <input type="email" class="form-control" id="register-email" required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="register-password" class="form-label">Password</label>
+
+                            <input type="password" class="form-control" id="register-password" required>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="register-weight" class="form-label">Current Weight (lbs)</label>
+
+                            <input type="number" step="0.1" class="form-control" id="register-weight" value="202">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="register-height" class="form-label">Height (inches)</label>
+
+                            <input type="number" step="0.1" class="form-control" id="register-height">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="register-goal" class="form-label">Fitness Goal</label>
+
+                            <select class="form-select" id="register-goal">
+
+                                <option value="strength">Build Strength</option>
+
+                                <option value="muscle">Build Muscle</option>
+
+                                <option value="endurance">Improve Endurance</option>
+
+                                <option value="weight-loss">Weight Loss</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="d-grid">
+
+                            <button type="submit" class="btn btn-primary">Register</button>
+
+                        </div>
+
+                    </form>
+
+                    <hr>
+
+                    <p class="text-center mb-0">Already have an account? <a href="#" id="show-login">Login</a></p>
+
+                </div>
+
+            </div>
+
+        </main>
+
+
+
+        <footer class="bg-light py-3 text-center">
+
+            <div class="container">
+
+                <p class="mb-0">FitTrack &copy; 2025 - Your Personal Exercise Tracker</p>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+
+    <!-- PWA Service Worker Registration -->
+
+<script>
+
+// Register service worker for PWA functionality
+
+if ('serviceWorker' in navigator) {
+
+    window.addEventListener('load', async () => {
+
+        try {
+
+            const registration = await navigator.serviceWorker.register('/service-worker.js');
+
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+            
+
+            // Set up background sync if supported
+
+            if ('sync' in registration) {
+
+                // Listen for app coming back online
+
+                window.addEventListener('online', () => {
+
+                    // Trigger background sync for any offline data
+
+                    registration.sync.register('sync-workout-data');
+
+                    registration.sync.register('sync-weight-data');
+
+                    registration.sync.register('sync-bjj-data');
+
+                });
+
+            }
+
+            
+
+            // Set up for "Add to Home Screen" prompt
+
+            let deferredPrompt;
+
+            const addBtn = document.createElement('button');
+
+            addBtn.style.display = 'none';
+
+            addBtn.classList.add('btn', 'btn-primary', 'mt-3');
+
+            addBtn.textContent = 'Install FitTrack App';
+
+            
+
+            // Add button to page (you can position this where appropriate)
+
+            document.querySelector('.container').appendChild(addBtn);
+
+            
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+
+                // Prevent Chrome 67 and earlier from automatically showing the prompt
+
+                e.preventDefault();
+
+                // Stash the event so it can be triggered later
+
+                deferredPrompt = e;
+
+                // Update UI to notify the user they can add to home screen
+
+                addBtn.style.display = 'block';
+
+                
+
+                addBtn.addEventListener('click', (e) => {
+
+                    // Hide our user interface that shows our A2HS button
+
+                    addBtn.style.display = 'none';
+
+                    // Show the prompt
+
+                    deferredPrompt.prompt();
+
+                    // Wait for the user to respond to the prompt
+
+                    deferredPrompt.userChoice.then((choiceResult) => {
+
+                        if (choiceResult.outcome === 'accepted') {
+
+                            console.log('User accepted the A2HS prompt');
+
+                            FitTrack.showToast('App installed successfully!', 'success');
+
+                        } else {
+
+                            console.log('User dismissed the A2HS prompt');
+
+                        }
+
+                        deferredPrompt = null;
+
+                    });
+
+                });
+
+            });
+
+            
+
+            // Handle app updates
+
+            let refreshing = false;
+
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+
+                if (!refreshing) {
+
+                    refreshing = true;
+
+                    window.location.reload();
+
+                }
+
+            });
+
+            
+
+        } catch (error) {
+
+            console.error('ServiceWorker registration failed: ', error);
+
+        }
+
+    });
+
+}
+
+
+
+// Setup offline detection and notification
+
+function updateOnlineStatus() {
+
+    const statusDisplay = document.getElementById('status');
+
+    if (navigator.onLine) {
+
+        if (statusDisplay) {
+
+            statusDisplay.innerHTML = '';
+
+            statusDisplay.style.display = 'none';
+
+        } else if (FitTrack && typeof FitTrack.showToast === 'function') {
+
+            FitTrack.showToast('You are back online!', 'success');
+
+        }
+
+    } else {
+
+        // Create status element if it doesn't exist
+
+        if (!statusDisplay) {
+
+            const status = document.createElement('div');
+
+            status.id = 'status';
+
+            status.className = 'alert alert-warning fixed-top text-center';
+
+            status.innerHTML = 'You are currently offline. Some features may be limited.';
+
+            document.body.prepend(status);
+
+        } else {
+
+            statusDisplay.innerHTML = 'You are currently offline. Some features may be limited.';
+
+            statusDisplay.style.display = 'block';
+
+        }
+
+    }
+
+}
+
+
+
+window.addEventListener('online', updateOnlineStatus);
+
+window.addEventListener('offline', updateOnlineStatus);
+
+updateOnlineStatus(); // Initial check
+
+</script>
+
+    
+
+</body>
+
 </html>
